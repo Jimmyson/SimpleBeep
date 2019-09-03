@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SimpleBeep.DataAccess;
 using SimpleBeep.Models;
+using SimpleBeep.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text.Encodings.Web;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 namespace SimpleBeep.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class TrackController : Controller
     {
         private readonly SimpleBeepContext _context;
@@ -21,11 +23,11 @@ namespace SimpleBeep.Controllers
 
         // 
         // GET: api/Track/
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Track>>> GetTracks()
-        {
-            return await _context.Tracks.ToListAsync();
-        }
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<Track>>> GetTracks()
+        // {
+        //     return await _context.Tracks.ToListAsync();
+        // }
 
         // 
         // GET: api/Track/{guid-id}/
@@ -43,21 +45,33 @@ namespace SimpleBeep.Controllers
         //
         // POST: api/Track
         [HttpPost]
-        public async Task<ActionResult<Track>> PostPlayist(Track t)
+        public async Task<ActionResult<Track>> PostPlayist(TrackViewModel tvm)
         {
+            Track t = new Track() {
+                Name = tvm.Name,
+                Description = tvm.Description,
+                Id = Guid.NewGuid(),
+                Playlist = _context.Playlists.Find(Guid.Parse(tvm.Playlist))
+            };
+
             _context.Tracks.Add(t);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTrack), new {id = t.ExtId}, t);
+            return CreatedAtAction(nameof(GetTrack), new {id = t.Id}, t);
         }
 
         //
         // PUT: api/Track/{guid-id}
-        [HttpPut]
-        public async Task<IActionResult> PutTrack(Guid id, Track t)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutTrack(Guid id, TrackViewModel tvm)
         {
-            if (id != t.ExtId)
+            if (id != Guid.Parse(tvm.Id))
                 return BadRequest();
+
+            Track t = _context.Tracks.Find(id);
+            t.Name = tvm.Name;
+            t.Description = tvm.Description;
+            t.PlaylistId = Guid.Parse(tvm.Playlist);
 
             _context.Entry(t).State = EntityState.Modified;
             await _context.SaveChangesAsync();
@@ -67,7 +81,7 @@ namespace SimpleBeep.Controllers
 
         //
         // DELETE: api/Track/{guid-id}
-        [HttpPut]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTrack(Guid id)
         {
             Track item = await _context.Tracks.FindAsync(id);
