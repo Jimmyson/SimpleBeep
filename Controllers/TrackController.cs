@@ -48,8 +48,8 @@ namespace SimpleBeep.Controllers
         public async Task<ActionResult<Track>> PostPlayist(TrackViewModel tvm)
         {
             Track t = new Track() {
-                Name = tvm.Name,
-                Description = tvm.Description,
+                Name = tvm.Name.Trim(),
+                Description = tvm.Description.Trim(),
                 Id = Guid.NewGuid(),
                 Playlist = _context.Playlists.Find(Guid.Parse(tvm.Playlist))
             };

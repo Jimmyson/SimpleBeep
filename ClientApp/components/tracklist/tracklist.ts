@@ -6,7 +6,7 @@ class Playlist
 {
     name: string;
     composer: string;
-    id: string; // @todo: FIND GUID SUPPLIMENT
+    id: string;
     edit: boolean;
 
     constructor() {
