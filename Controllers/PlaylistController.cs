@@ -63,8 +63,8 @@ namespace SimpleBeep.Controllers
         public async Task<ActionResult<PlaylistViewModel>> PostPlayist(PlaylistViewModel pvm)
         {
             Playlist p = new Playlist() {
-                Name = pvm.Name,
-                Composer = pvm.Composer,
+                Name = pvm.Name.Trim(),
+                Composer = pvm.Composer.Trim(),
                 Id = Guid.NewGuid()
             };
 
@@ -83,8 +83,8 @@ namespace SimpleBeep.Controllers
                 return BadRequest();
 
             Playlist p = _context.Playlists.Find(id);
-            p.Name = pvm.Name;
-            p.Composer = pvm.Composer;
+            p.Name = pvm.Name.Trim();
+            p.Composer = pvm.Composer.Trim();
 
             _context.Entry(p).State = EntityState.Modified;
             await _context.SaveChangesAsync();

@@ -23,12 +23,29 @@
                 </tr>
             </thead>
             <tbody v-if="Tracklists.length">
-                <tr v-for="item in Tracklists">
+                <tr v-if="!item.edit" v-for="(item, index) in Tracklists">
                     <td>{{ item.name }}</td>
                     <td>{{ item.composer }}</td>
-                    <td></td>
                     <td>
-                        <input type="button" value="Delete List..." v-on:click="deletePlaylist()" />
+                        <input type="button" value="View List" />
+                    </td>
+                    <td>
+                        <input type="button" value="Edit List..." v-on:click="editPlaylist(index)" />
+                    </td>
+                </tr>
+                <tr v-else>
+                    <td>
+                        <input v-model="item.name" />
+                    </td>
+                    <td>
+                        <input v-model="item.composer" />
+                    </td>
+                    <td>
+                        <input type="button" value="Update List..." v-on:click="updatePlaylist(index, item.id)" />
+                        <input type="button" value="Delete List..." v-on:click="deletePlaylist(index, item.id)" />
+                    </td>
+                    <td>
+                        <input type="button" value="Cancel Edit" v-on:click="editPlaylist(index)" />
                     </td>
                 </tr>
             </tbody>
@@ -47,7 +64,8 @@
                     <td>
                         <input v-model="createItem.composer" />
                     </td>
-                    <td colspan="2">
+                    <td></td>
+                    <td>
                         <input type="button" value="Add Tracklist" v-on:click="createPlaylist()" />
                     </td>
                 </tr>

@@ -7,11 +7,13 @@ class Playlist
     name: string;
     composer: string;
     id: string; // @todo: FIND GUID SUPPLIMENT
+    edit: boolean;
 
     constructor() {
         this.name = "";
         this.composer = "";
         this.id = "";
+        this.edit = false;
     }
 }
 
@@ -21,21 +23,33 @@ export default class TracklistComponent extends Vue {
     createItem: Playlist = new Playlist();
     errors: any[] = [];
 
-    mounted() {
+    queryList() {
         Axios.get('api/Playlist')
             .then(response => {
-                this.Tracklists = response.data
+                this.Tracklists = response.data;
+                this.Tracklists.forEach((item) => {
+                    item.edit = false
+                })
             })
             .catch(e => {
                 this.errors.push(e);
             });
     }
 
+    editPlaylist(loc: number)
+    {
+        this.Tracklists[loc].edit = !this.Tracklists[loc].edit;
+        this.$forceUpdate(); // Used to re-render Vue UI
+    }
+
+    mounted() {
+        this.queryList();
+    }
+
     createPlaylist() {
         Axios.post('api/Playlist', this.createItem)
-            .then(respone => {})
-            .then(action => {
-                this.Tracklists.push(this.createItem)
+            .then(response => {
+                this.queryList();
             })
             .then(action => this.createItem = new Playlist)
             .catch(e => {
@@ -43,19 +57,25 @@ export default class TracklistComponent extends Vue {
             })
     }
 
-    updatePlaylist() {
-        Axios.put('api/Track' + '<id>', {
-            body: undefined //this.Tracklists[x]
-        })
-            .then(response => {})
+    updatePlaylist(loc: number, id: string) {
+        var item = this.Tracklists[loc];
+        delete item.edit;
+        Axios.put('api/Playlist/' + id, item)
+            .then(response => {
+                this.Tracklists[loc].edit = false;
+                this.queryList();
+            })
             .catch(e => {
                 this.errors.push(e)
             })
     }
 
-    deletePlayliist() {
-        Axios.delete('api/Playlist' + '<id>')
-            .then(response => {})
+    deletePlaylist(loc: number, id: string) {
+        Axios.delete('api/Playlist/' + id)
+            .then(response => {
+                this.Tracklists[loc].edit = false;
+                this.queryList();
+            })
             .catch(e => {
                 this.errors.push(e);
             })
