@@ -3,14 +3,14 @@
         <div>
             <div v-if="errors.length">
                 <div v-for="e in errors">
-                    <p>{{e}}</p>
+                    <p>{{ e }}</p>
                 </div>
             </div>
         </div>
-        <h1>{{Tracklist.name}}</h1>
-        <h3>{{Tracklist.composer}}</h3>
+        <h1>{{ Tracklist.name }}</h1>
+        <h3>{{ Tracklist.composer }}</h3>
 
-        <p>Showing all tracks for {{Tracklist.name}}</p>
+        <p>Showing all tracks for {{ Tracklist.name }}</p>
 
         <router-link to="/tracklist">Return to list...</router-link>
 
