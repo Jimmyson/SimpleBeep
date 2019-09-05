@@ -26,7 +26,7 @@ namespace SimpleBeep
         {
             
             services.AddDbContext<SimpleBeepContext>(opt => 
-                opt.UseInMemoryDatabase("SimpleBeep"));
+                opt.UseSqlite(@"Data Source=SimpleBeep.db"));
             services.AddMvc()
                 .AddJsonOptions(options => {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
@@ -49,6 +49,12 @@ namespace SimpleBeep
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
+            }
+
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<SimpleBeepContext>();
+                context.Database.EnsureCreated();
             }
 
             app.UseHttpsRedirection();
