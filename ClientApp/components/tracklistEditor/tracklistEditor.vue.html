@@ -2,8 +2,9 @@
     <div>
         <div>
             <div v-if="errors.length">
-                <div v-for="e in errors">
+                <div class="alert alert-danger" v-for="(e, index) in errors">
                     <p>{{ e }}</p>
+                    <a v-on:click="dismissNotice(index)">Dismiss</a>
                 </div>
             </div>
         </div>
@@ -12,13 +13,16 @@
 
         <p>Showing all tracks for {{ Tracklist.name }}</p>
 
-        <router-link to="/tracklist">Return to list...</router-link>
+        <router-link to="/tracklist">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            Return to list...
+        </router-link>
 
         <table class="table">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Description</th>
+                    <th>Name <button v-on:click="sortList('name', 'ASC')">Sort List...</button></th>
+                    <th>Description <button v-on:click="sortList('description', 'ASC')">Sort List...</button></th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -29,7 +33,10 @@
                     <td>{{ item.description }}</td>
                     <td></td>
                     <td>
-                        <input type="button" value="Edit Track..." v-on:click="editTrack(index)" />
+                        <a v-on:click="editTrack(index)">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                            Edit Track...
+                        </a>
                     </td>
                 </tr>
                 <tr v-else>
@@ -40,11 +47,14 @@
                         <input v-model="item.description" />
                     </td>
                     <td>
-                        <input type="button" value="Update Track..." v-on:click="updateTrack(index, item.id)" />
-                        <input type="button" value="Delete Track..." v-on:click="deleteTrack(index, item.id)" />
+                        <a class="glyphicon glyphicon-floppy-disk" v-on:click="updateTrack(index, item.id)"></a>
+                        <a class="glyphicon glyphicon-trash text-danger" v-on:click="deleteTrack(index, item.id)"></a>
                     </td>
                     <td>
-                        <input type="button" value="Cancel Edit" v-on:click="editTrack(index)" />
+                        <a v-on:click="editTrack(index)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Cancel Edit...
+                        </a>
                     </td>
                 </tr>
             </tbody>
@@ -58,14 +68,17 @@
             <tfoot>
                 <tr>
                     <td>
-                        <input v-model="createItem.name" />
+                        <input v-model="createItem.name" placeholder="Track Name"/>
                     </td>
                     <td>
-                        <input v-model="createItem.description" />
+                        <input v-model="createItem.description" placeholder="Track Description"/>
                     </td>
                     <td></td>
                     <td>
-                        <input type="button" value="Add Track" v-on:click="createTrack()" />
+                        <a v-on:click="createTrack()">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Add List
+                        </a>
                     </td>
                 </tr>
             </tfoot>

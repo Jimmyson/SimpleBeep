@@ -25,9 +25,14 @@ namespace SimpleBeep.Controllers
         // 
         // GET: api/Playlist/
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Playlist>>> GetPlaylists()
+        public async Task<ActionResult<IEnumerable<PlaylistViewModel>>> GetPlaylists()
         {
-            return await _context.Playlists.ToListAsync();
+            return await _context.Playlists.Select(pl => new PlaylistViewModel() {
+                Name = pl.Name,
+                Composer = pl.Composer,
+                Id = pl.Id.ToString(),
+                TrackCount = pl.Tracks.Count
+            }).ToListAsync();
         }
 
         // 

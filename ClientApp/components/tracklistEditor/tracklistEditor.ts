@@ -52,6 +52,30 @@ export default class TracklistEditorComponent extends Vue {
             });
     }
 
+    sortList(propName: keyof Track, order: string) {
+        var p = new Track();
+        switch (typeof p[propName]) {
+            case "string":
+                this.Tracklist.tracks.sort((a,b) => {
+                    var x = a[propName].toString().toLowerCase();
+                    var y = b[propName].toString().toLowerCase();
+                    if (x < y) {return -1;}
+                    if (x > y) {return 1;}
+                    return 0;
+                })
+                break;
+            default:
+                this.Tracklist.tracks.sort((a,b) => {
+                    if (a[propName] < b[propName]) {return -1;}
+                    if (a[propName] > b[propName]) {return 1;}
+                    return 0;
+                })
+                break;
+        };
+
+        if (order === 'DESC') this.Tracklist.tracks.reverse();
+    }
+
     editTrack(loc: number)
     {
         this.Tracklist.tracks[loc].edit = !this.Tracklist.tracks[loc].edit;
@@ -64,6 +88,11 @@ export default class TracklistEditorComponent extends Vue {
     }
 
     createTrack() {
+        if (this.createItem.name === "") {
+            this.errors.push("Please enter in a Tracklist name");
+            return;
+        }
+
         Axios.post('api/Track', this.createItem)
             .then(response => {
                 this.queryTracklist()
@@ -99,5 +128,9 @@ export default class TracklistEditorComponent extends Vue {
             .catch(e => {
                 this.errors.push(e);
             })
+    }
+
+    dismissNotice(loc: number) {
+        this.errors.splice(loc, 1);
     }
 }
