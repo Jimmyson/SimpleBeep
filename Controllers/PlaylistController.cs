@@ -36,9 +36,22 @@ namespace SimpleBeep.Controllers
         }
 
         // 
-        // GET: api/Playlist/{guid-id}/
+        // GET: api/Playlist/{guid-id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<PlaylistTrackViewModel>> GetPlaylist(Guid id)
+        public async Task<ActionResult<IEnumerable<PlaylistViewModel>>> GetPlaylist(Guid id)
+        {
+            return await _context.Playlists.Where(p => p.Id == id).Select(pl => new PlaylistViewModel() {
+                Name = pl.Name,
+                Composer = pl.Composer,
+                Id = pl.Id.ToString(),
+                TrackCount = pl.Tracks.Count
+            }).ToListAsync();
+        }
+
+        // 
+        // GET: api/Playlist/Tracks/{guid-id}/
+        [HttpGet("Tracks/{id}")]
+        public async Task<ActionResult<PlaylistTrackViewModel>> GetPlaylistTracks(Guid id)
         {
             Playlist item = await _context.Playlists.Include(p => p.Tracks).SingleAsync(p => p.Id == id);
 
@@ -69,14 +82,16 @@ namespace SimpleBeep.Controllers
         {
             Playlist p = new Playlist() {
                 Name = pvm.Name.Trim(),
-                Composer = pvm.Composer.Trim(),
+                Composer = pvm.Composer?.Trim(),
                 Id = Guid.NewGuid()
             };
 
             _context.Playlists.Add(p);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPlaylist), new {id = p.Id}, p);
+            pvm.Id = p.Id.ToString();
+
+            return CreatedAtAction(nameof(GetPlaylist), new {id = p.Id}, pvm);
         }
 
         //

@@ -40,12 +40,9 @@ export default class TracklistEditorComponent extends Vue {
     errors: any[] = [];
 
     queryTracklist() {
-        Axios.get('api/Playlist/' + this.$route.params.id)
+        Axios.get('api/Playlist/Tracks/' + this.$route.params.id)
             .then(response => {
                 this.Tracklist = response.data;
-                //this.Tracklist.tracks.forEach((item) => {
-                //    item.edit = false;
-                //})
             })
             .catch(e => {
                 this.errors.push(e);
@@ -95,7 +92,10 @@ export default class TracklistEditorComponent extends Vue {
 
         Axios.post('api/Track', this.createItem)
             .then(response => {
-                this.queryTracklist()
+                response.data.edit = false;
+                response.data.playlist = response.data.playlistId;
+                delete response.data.playlistId;
+                this.Tracklist.tracks.push(response.data as Track)
             })
             .then(action => {
                 this.createItem = new Track();
@@ -112,18 +112,18 @@ export default class TracklistEditorComponent extends Vue {
         Axios.put('api/Track/' + id, item)
             .then(response => {
                 this.Tracklist.tracks[loc].edit = false;
-                this.queryTracklist();
             })
             .catch(e => {
                 this.errors.push(e)
             })
+        this.$forceUpdate();
     }
 
     deleteTrack(loc: number, id: string) {
         Axios.delete('api/Track/' + id)
             .then(response => {
                 this.Tracklist.tracks[loc].edit = false;
-                this.queryTracklist();
+                this.Tracklist.tracks.splice(loc, 1);
             })
             .catch(e => {
                 this.errors.push(e);

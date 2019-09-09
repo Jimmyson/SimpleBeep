@@ -8,10 +8,11 @@
                 </div>
             </div>
         </div>
-        <h1>{{ Tracklist.name }}</h1>
-        <h3>{{ Tracklist.composer }}</h3>
+        <h1>Tracklist Viewer</h1>
+        <h3 v-if="this.Tracklist.id">{{ Tracklist.name }} - {{ Tracklist.composer }}</h3>
+        <h3 v-else><span class="glyphicon glyphicon-refresh"></span></h3>
 
-        <p>Showing all tracks for {{ Tracklist.name }}</p>
+        <p>Showing all saved and listed tracks</p>
 
         <router-link to="/tracklist">
             <span class="glyphicon glyphicon-chevron-left"></span>
@@ -41,10 +42,10 @@
                 </tr>
                 <tr v-else>
                     <td>
-                        <input v-model="item.name" />
+                        <input v-model="item.name" class="form-control"/>
                     </td>
                     <td>
-                        <input v-model="item.description" />
+                        <input v-model="item.description" class="form-control"/>
                     </td>
                     <td>
                         <a class="glyphicon glyphicon-floppy-disk" v-on:click="updateTrack(index, item.id)"></a>
@@ -68,10 +69,10 @@
             <tfoot>
                 <tr>
                     <td>
-                        <input v-model="createItem.name" placeholder="Track Name"/>
+                        <input v-model="createItem.name" class="form-control" placeholder="Track Name"/>
                     </td>
                     <td>
-                        <input v-model="createItem.description" placeholder="Track Description"/>
+                        <input v-model="createItem.description" class="form-control" placeholder="Track Description"/>
                     </td>
                     <td></td>
                     <td>

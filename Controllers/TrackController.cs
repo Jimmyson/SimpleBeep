@@ -49,7 +49,7 @@ namespace SimpleBeep.Controllers
         {
             Track t = new Track() {
                 Name = tvm.Name.Trim(),
-                Description = tvm.Description.Trim(),
+                Description = tvm.Description?.Trim(),
                 Id = Guid.NewGuid(),
                 Playlist = _context.Playlists.Find(Guid.Parse(tvm.Playlist))
             };

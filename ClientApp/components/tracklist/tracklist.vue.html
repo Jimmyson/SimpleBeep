@@ -42,10 +42,10 @@
                 </tr>
                 <tr v-else>
                     <td>
-                        <input v-model="item.name" />
+                        <input v-model="item.name" class="form-control"/>
                     </td>
                     <td>
-                        <input v-model="item.composer" />
+                        <input v-model="item.composer" class="form-control"/>
                     </td>
                     <td></td>
                     <td>
@@ -70,10 +70,10 @@
             <tfoot>
                 <tr>
                     <td>
-                        <input v-model="createItem.name" placeholder="Playlist Name"/>
+                        <input v-model="createItem.name" class="form-control" placeholder="Playlist Name"/>
                     </td>
                     <td>
-                        <input v-model="createItem.composer" placeholder="Composer Name"/>
+                        <input v-model="createItem.composer" class="form-control" placeholder="Composer Name"/>
                     </td>
                     <td></td>
                     <td></td>

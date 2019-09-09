@@ -80,9 +80,12 @@ export default class TracklistComponent extends Vue {
 
         Axios.post('api/Playlist', this.createItem)
             .then(response => {
-                this.queryList();
+                response.data.edit = false;
+                this.Tracklists.push(response.data as Playlist)
             })
-            .then(action => this.createItem = new Playlist)
+            .then(action => {
+                this.createItem = new Playlist;
+            })
             .catch(e => {
                 this.errors.push(e);
             })
@@ -94,18 +97,17 @@ export default class TracklistComponent extends Vue {
         Axios.put('api/Playlist/' + id, item)
             .then(response => {
                 this.Tracklists[loc].edit = false;
-                this.queryList();
             })
             .catch(e => {
                 this.errors.push(e)
             })
+        this.$forceUpdate();
     }
 
     deletePlaylist(loc: number, id: string) {
         Axios.delete('api/Playlist/' + id)
             .then(response => {
-                this.Tracklists[loc].edit = false;
-                this.queryList();
+                this.Tracklists.splice(loc, 1);
             })
             .catch(e => {
                 this.errors.push(e);
