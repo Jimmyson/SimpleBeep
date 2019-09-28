@@ -24,14 +24,24 @@ namespace SimpleBeep
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            var builder = new PostgreSqlConnectionStringBuilder(Configuration["DATABASE_URL"])
+            {
+                Pooling = true,
+                TrustServerCertificate = true,
+                SslMode = SslMode.Require
+            };
+
             services.AddDbContext<SimpleBeepContext>(opt => 
-                opt.UseSqlite(@"Data Source=SimpleBeep.db"));
+                opt.UseNpgsql(builder.ConnectionString));
             services.AddMvc()
                 .AddJsonOptions(options => {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 })
                 .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
+
+            services.AddEntityFrameworkNpgsql()
+               .AddDbContext<SimpleBeepContext>()
+               .BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
